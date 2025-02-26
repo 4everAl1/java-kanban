@@ -2,7 +2,7 @@ public class Task {
 
     protected String title;
     protected String description;
-    StatusTask status;
+    protected StatusTask status;
     protected int id;
     protected int epicIdBySubtask;
 

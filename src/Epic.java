@@ -1,13 +1,16 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task{
 
-    HashMap<Integer, Subtask> subtasksEpic;
+    protected HashMap<Integer, Subtask> subtasksEpic;
     private StatusTask epicStatus;
 
-    public void setTaskId(int taskId) {
+    public void setEpicId(int id) {
         this.id = id;
+    }
+
+    public int getEpicId() {
+        return id;
     }
 
     public Epic(String title, String description) {

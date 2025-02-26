@@ -1,6 +1,5 @@
 public class Subtask extends Task{
 
-    protected int taskId;
     protected int epicId;
 
 
@@ -12,12 +11,12 @@ public class Subtask extends Task{
         this.epicId = epicId;
     }
 
-    public int getTaskId() {
+    public int getSubtaskId() {
         return id;
     }
 
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
+    public void setSubtaskId(int taskId) {
+        this.id = taskId;
     }
 
     public Subtask(String title, String description) {
