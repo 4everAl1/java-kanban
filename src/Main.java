@@ -1,7 +1,3 @@
-/* Было потрачено много сил, проверил все ситуации которые смог на момент этого спринта,
-* проверок оставил много, надеюсь это не проблема)
-* Формулировка ТЗ довольно сложная и непонятная, но вроде все моменты соблюдены!)*/
-
 public class Main {
 
     public static void main(String[] args) {
@@ -18,7 +14,7 @@ public class Main {
         task3 = taskManager.addTask(new Task("Задача 3","Третья"));
         taskManager.removeTaskById(task1.getTaskID());
         taskManager.removeTaskById(task2.getTaskID());
-        taskManager.updateTask(task3.getTaskID(),new Task("Всё ещё задача 3", "Но уже в процессе",StatusTask.IN_PROGRESS));
+        taskManager.updateTask(new Task("Всё ещё задача 3", "Но уже в процессе",StatusTask.IN_PROGRESS,task3.getTaskID()));
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getTaskByID(task3.getTaskID()));
         System.out.println();
@@ -36,7 +32,7 @@ public class Main {
         System.out.println(taskManager.getEpicByID(epic2.getTaskID()));
         taskManager.removeEpicById(epic1.getTaskID());
         System.out.println(taskManager.getAllEpics());
-        taskManager.updateEpic(epic3.getTaskID(),new Epic("Так же 3 эпик", "Только обновлённый"));
+//        taskManager.updateEpic(new Epic("Так же 3 эпик", "Только обновлённый", epic3.getTaskID()));
         System.out.println(taskManager.getAllEpics());
         System.out.println();
         System.out.println();
@@ -55,7 +51,7 @@ public class Main {
         System.out.println(taskManager.getAllSubtask());
         System.out.println(taskManager.getSubtaskByEpic(epic3.getEpicId()));
         System.out.println();
-        taskManager.updateSubtask(subtask1.getSubtaskId(),new Subtask("Задача 1", "Что-то делать...",StatusTask.IN_PROGRESS));
+        taskManager.updateSubtask(new Subtask("Задача 1", "Что-то делать...",StatusTask.IN_PROGRESS, subtask1.getSubtaskId()));
         System.out.println(taskManager.getAllSubtask());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getSubtaskByID(subtask1.getSubtaskId()));
@@ -69,9 +65,6 @@ public class Main {
         taskManager.removeEpicById(epic2.getEpicId());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubtask());
-
-
-
 
     }
 }

@@ -1,8 +1,10 @@
+import java.util.Objects;
+
 public class Task {
 
-    protected String title;
-    protected String description;
-    protected StatusTask status;
+    private String title;
+    private String description;
+    private StatusTask status;
     protected int id;
     protected int epicIdBySubtask;
 
@@ -13,10 +15,11 @@ public class Task {
     }
 
     //для обновления статуса
-    public Task(String title, String description, StatusTask status) {
+    public Task(String title, String description, StatusTask status,int id) {
         this.title = title;
         this.description = description;
         this.status = status;
+        this.id = id;
     }
 
     public String getTitle() {
@@ -41,6 +44,19 @@ public class Task {
 
     public void setStatus(StatusTask status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Task task = (Task) object;
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override

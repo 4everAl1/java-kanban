@@ -2,8 +2,24 @@ import java.util.HashMap;
 
 public class Epic extends Task{
 
-    protected HashMap<Integer, Subtask> subtasksEpic;
-    private StatusTask epicStatus;
+    private HashMap<Integer, Subtask> subtasksEpic;
+
+    public void setSubtasksEpic(HashMap<Integer, Subtask> subtasksEpic) {
+        this.subtasksEpic = subtasksEpic;
+    }
+
+    public Epic(String title, String description) {
+        super(title, description);
+        subtasksEpic = new HashMap<>();
+        this.setStatus(StatusTask.NEW);
+    }
+
+    public Epic(String title, String description, int id) {
+        super(title, description);
+        this.id = id;
+        subtasksEpic = new HashMap<>();
+        this.setStatus(StatusTask.NEW);
+    }
 
     public void setEpicId(int id) {
         this.id = id;
@@ -13,13 +29,7 @@ public class Epic extends Task{
         return id;
     }
 
-    public Epic(String title, String description) {
-        super(title, description);
-        subtasksEpic = new HashMap<>();
-        this.status = StatusTask.NEW;
-    }
-
-    public HashMap<Integer, Subtask> getSubtasksEpic() {
+    public HashMap<Integer, Subtask> getMapSubtasksEpic() {
         return subtasksEpic;
     }
 
@@ -30,9 +40,9 @@ public class Epic extends Task{
     @Override
     public String toString() {
         return "Epic{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
+                "title='" + getTitle() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", status=" + getStatus() +
                 ", id=" + id +
                 '}';
     }
