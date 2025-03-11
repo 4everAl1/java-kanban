@@ -1,4 +1,4 @@
-public class Subtask extends Task{
+public class Subtask extends AbstractTask{
 
     private int epicId;
 
@@ -20,21 +20,13 @@ public class Subtask extends Task{
         this.epicId = epicId;
     }
 
-    public int getSubtaskId() {
-        return id;
-    }
-
-    public void setSubtaskId(int taskId) {
-        this.id = taskId;
-    }
-
     @Override
     public String toString() {
         return "Subtask{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() +
-                ", epicID=" + epicId +
+                ", status=" + getStatus() + '\'' +
+                ", epicId=" + epicId + '\'' + ", id=" + getId() +
                 '}';
     }
 }

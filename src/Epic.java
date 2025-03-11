@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class Epic extends Task{
+public class Epic extends AbstractTask{
 
     private HashMap<Integer, Subtask> subtasksEpic;
 
@@ -16,17 +16,9 @@ public class Epic extends Task{
 
     public Epic(String title, String description, int id) {
         super(title, description);
-        this.id = id;
+        this.setId(id);
         subtasksEpic = new HashMap<>();
         this.setStatus(StatusTask.NEW);
-    }
-
-    public void setEpicId(int id) {
-        this.id = id;
-    }
-
-    public int getEpicId() {
-        return id;
     }
 
     public HashMap<Integer, Subtask> getMapSubtasksEpic() {
@@ -43,7 +35,7 @@ public class Epic extends Task{
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
-                ", id=" + id +
+                ", id=" + getId() +
                 '}';
     }
 }
