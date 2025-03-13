@@ -28,7 +28,7 @@ class InMemoryTaskManagerTest {
         Task task1 = taskManager.addTask(new Task("Задача1", "Описание"));
         Task taskUpdate = new Task("Обновлённая задача", "С новым описанием",
                 StatusTask.IN_PROGRESS, task1.getId());
-        assertEquals(task1.hashCode(),taskUpdate.hashCode());
+        assertEquals(task1,taskUpdate);
     }
     @Test
     void addNewTask() {
