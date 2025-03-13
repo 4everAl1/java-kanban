@@ -1,3 +1,5 @@
+package program;
+
 import java.util.HashMap;
 
 public class Epic extends AbstractTask{
@@ -31,7 +33,7 @@ public class Epic extends AbstractTask{
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "program.Epic{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +

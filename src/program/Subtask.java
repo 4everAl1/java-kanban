@@ -1,3 +1,5 @@
+package program;
+
 public class Subtask extends AbstractTask{
 
     private int epicId;
@@ -22,7 +24,7 @@ public class Subtask extends AbstractTask{
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "program.Subtask{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() + '\'' +

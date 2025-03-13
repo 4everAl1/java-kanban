@@ -1,3 +1,5 @@
+package program;
+
 import java.util.ArrayList;
 
 public interface TaskManager {
@@ -40,4 +42,5 @@ public interface TaskManager {
     void removeSubtaskById(int id);
 
     ArrayList<AbstractTask> getHistory();
+
 }
