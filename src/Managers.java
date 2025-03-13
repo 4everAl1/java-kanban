@@ -1,13 +1,13 @@
 public class Managers {
-    private final TaskManager defaultTaskManager = new InMemoryTaskManager();
-    private final HistoryManager defaultHistoryManager = new InMemoryHistoryManager();
+    private static final TaskManager defaultTaskManager = new InMemoryTaskManager();
+    private static final HistoryManager defaultHistoryManager = new InMemoryHistoryManager();
 
 
-    public TaskManager getDefaultTaskManager() {
+    public static TaskManager getDefaultTaskManager() {
         return defaultTaskManager;
     }
 
-    public HistoryManager getDefaultHistoryManager() {
+    public static HistoryManager getDefaultHistoryManager() {
         return defaultHistoryManager;
     }
 }

@@ -7,7 +7,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     private final ArrayList<AbstractTask> history;
 
     public InMemoryHistoryManager() {
-        this.history = new ArrayList<AbstractTask>();
+        this.history = new ArrayList<>();
     }
 
     @Override
