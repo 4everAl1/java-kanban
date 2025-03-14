@@ -8,7 +8,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> taskList = new HashMap<>();
     private final HashMap<Integer, Epic> epicList = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistoryManager();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int countID = 1;
 
 
@@ -135,7 +135,6 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskList.put(subtask.getId(), subtask);
         subtask.setEpicId(delEpId);
         epicList.get(delEpId).addSubtask(subtask.getId(), subtask);
-//        subtask.setEpicId(subtaskList.get(subtask.getTaskID()).getEpicId());
         checkEpicStatus(epicList.get(subtask.getEpicId()));
     }
 
@@ -179,6 +178,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public ArrayList <AbstractTask> getHistory() {
-        return historyManager.getDefaultHistory();
+        return historyManager.getHistory();
     }
 }

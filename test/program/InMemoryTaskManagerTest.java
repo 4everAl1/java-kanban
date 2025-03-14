@@ -68,7 +68,7 @@ class InMemoryTaskManagerTest {
     void addTaskInHistory() {
         Task task = taskManager.addTask(new Task("Задача1", "Описание"));
         historyManager.add(task);
-        final ArrayList<AbstractTask> history = historyManager.getDefaultHistory();
+        final ArrayList<AbstractTask> history = historyManager.getHistory();
         assertNotNull(history, "История не пустая.");
         assertEquals(1, history.size(), "История не пустая.");
     }
@@ -97,7 +97,7 @@ class InMemoryTaskManagerTest {
         historyManager.add(task9);
         historyManager.add(task10);
         historyManager.add(task11);
-        assertEquals(10, historyManager.getDefaultHistory().size());
+        assertEquals(10, historyManager.getHistory().size());
     }
 
     @Test
