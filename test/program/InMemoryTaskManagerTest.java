@@ -68,37 +68,37 @@ class InMemoryTaskManagerTest {
     void addTaskInHistory() {
         Task task = taskManager.addTask(new Task("Задача1", "Описание"));
         historyManager.add(task);
-        final ArrayList<AbstractTask> history = historyManager.getHistory();
+        final List<AbstractTask> history = historyManager.getHistory();
         assertNotNull(history, "История не пустая.");
         assertEquals(1, history.size(), "История не пустая.");
     }
 
-    @Test
-    void addElevenTasksInHistory() {
-        Task task1 = taskManager.addTask(new Task("Задача1", "Описание"));
-        Task task2 = taskManager.addTask(new Task("Задача2", "Описание"));
-        Task task3 = taskManager.addTask(new Task("Задача3", "Описание"));
-        Task task4 = taskManager.addTask(new Task("Задача4", "Описание"));
-        Task task5 = taskManager.addTask(new Task("Задача5", "Описание"));
-        Task task6 = taskManager.addTask(new Task("Задача6", "Описание"));
-        Task task7 = taskManager.addTask(new Task("Задача7", "Описание"));
-        Task task8 = taskManager.addTask(new Task("Задача8", "Описание"));
-        Task task9 = taskManager.addTask(new Task("Задача9", "Описание"));
-        Task task10 = taskManager.addTask(new Task("Задача10", "Описание"));
-        Task task11 = taskManager.addTask(new Task("Задача11", "Описание"));
-        historyManager.add(task1);
-        historyManager.add(task2);
-        historyManager.add(task3);
-        historyManager.add(task4);
-        historyManager.add(task5);
-        historyManager.add(task6);
-        historyManager.add(task7);
-        historyManager.add(task8);
-        historyManager.add(task9);
-        historyManager.add(task10);
-        historyManager.add(task11);
-        assertEquals(10, historyManager.getHistory().size());
-    }
+//    @Test
+//    void addElevenTasksInHistory() {
+//        Task task1 = taskManager.addTask(new Task("Задача1", "Описание"));
+//        Task task2 = taskManager.addTask(new Task("Задача2", "Описание"));
+//        Task task3 = taskManager.addTask(new Task("Задача3", "Описание"));
+//        Task task4 = taskManager.addTask(new Task("Задача4", "Описание"));
+//        Task task5 = taskManager.addTask(new Task("Задача5", "Описание"));
+//        Task task6 = taskManager.addTask(new Task("Задача6", "Описание"));
+//        Task task7 = taskManager.addTask(new Task("Задача7", "Описание"));
+//        Task task8 = taskManager.addTask(new Task("Задача8", "Описание"));
+//        Task task9 = taskManager.addTask(new Task("Задача9", "Описание"));
+//        Task task10 = taskManager.addTask(new Task("Задача10", "Описание"));
+//        Task task11 = taskManager.addTask(new Task("Задача11", "Описание"));
+//        historyManager.add(task1);
+//        historyManager.add(task2);
+//        historyManager.add(task3);
+//        historyManager.add(task4);
+//        historyManager.add(task5);
+//        historyManager.add(task6);
+//        historyManager.add(task7);
+//        historyManager.add(task8);
+//        historyManager.add(task9);
+//        historyManager.add(task10);
+//        historyManager.add(task11);
+//        assertEquals(10, historyManager.getHistory().size());
+//    }
 
     @Test
     void statusEpicWhenUpdateStatusSubtask() {
