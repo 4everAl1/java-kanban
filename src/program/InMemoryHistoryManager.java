@@ -17,14 +17,13 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     public void linkLast(Node node){
-        Node oldTail = tail;
-        Node newNode = node;
-        tail = newNode;
-        if (oldTail == null) {
-            head = newNode;
+        if (head == null) {
+            head = node;
         } else {
-            oldTail.next = newNode;
+            node.prev = tail;
+            tail.next = node;
         }
+        tail = node;
     }
 
     private void removeNode(Node node) {
@@ -40,7 +39,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         }
 
         if (next != null) {
-            next.prev = next;
+            next.prev = prev;
         }
 
         if (prev != null) {
@@ -61,7 +60,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     public void add(AbstractTask task) {
         int id = task.getId();
 
-        Node node = new Node(task, null, null);
+        Node node = new Node(null, task, null);
         linkLast(node);
 
         remove(id);
@@ -87,10 +86,10 @@ public class InMemoryHistoryManager implements HistoryManager{
         private Node next;
         private Node prev;
 
-        public Node(AbstractTask task, Node next, Node prev) {
+        public Node(Node prev, AbstractTask task, Node next) {
+            this.prev = prev;
             this.task = task;
             this.next = next;
-            this.prev = prev;
         }
     }
 }
