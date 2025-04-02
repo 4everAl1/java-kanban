@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
 
     private final Map<Integer, Node> history;
     private Node head;
@@ -16,7 +16,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         this.history = new HashMap<>();
     }
 
-    public void linkLast(Node node){
+    public void linkLast(Node node) {
         if (head == null) {
             head = node;
         } else {
@@ -49,11 +49,11 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     @Override
     public void remove(int id) {
-       Node node = history.remove(id);
+        Node node = history.remove(id);
 
-       if (node != null) {
-           removeNode(node);
-       }
+        if (node != null) {
+            removeNode(node);
+        }
     }
 
     @Override
