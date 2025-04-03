@@ -80,6 +80,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         tail = node;
     }
+
     private static class Node {
         private final AbstractTask task;
         private Node next;
