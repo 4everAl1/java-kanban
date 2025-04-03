@@ -16,37 +16,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         this.history = new HashMap<>();
     }
 
-    public void linkLast(Node node) {
-        if (head == null) {
-            head = node;
-        } else {
-            node.prev = tail;
-            tail.next = node;
-        }
-        tail = node;
-    }
-
-    private void removeNode(Node node) {
-        Node prev = node.prev;
-        Node next = node.next;
-
-        if (head == node) {
-            head = next;
-        }
-
-        if (tail == node) {
-            tail = prev;
-        }
-
-        if (next != null) {
-            next.prev = prev;
-        }
-
-        if (prev != null) {
-            prev.next = next;
-        }
-    }
-
     @Override
     public void remove(int id) {
         Node node = history.remove(id);
@@ -81,6 +50,36 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     }
 
+    private void removeNode(Node node) {
+        Node prev = node.prev;
+        Node next = node.next;
+
+        if (head == node) {
+            head = next;
+        }
+
+        if (tail == node) {
+            tail = prev;
+        }
+
+        if (next != null) {
+            next.prev = prev;
+        }
+
+        if (prev != null) {
+            prev.next = next;
+        }
+    }
+
+    private void linkLast(Node node) {
+        if (head == null) {
+            head = node;
+        } else {
+            node.prev = tail;
+            tail.next = node;
+        }
+        tail = node;
+    }
     private static class Node {
         private final AbstractTask task;
         private Node next;
