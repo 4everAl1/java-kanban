@@ -1,6 +1,6 @@
 package program;
 
-public class Subtask extends AbstractTask{
+public class Subtask extends AbstractTask {
 
     private int epicId;
 

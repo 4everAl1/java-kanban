@@ -2,6 +2,7 @@ package program;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -177,7 +178,7 @@ public class InMemoryTaskManager implements TaskManager {
         return countID++;
     }
 
-    public ArrayList <AbstractTask> getHistory() {
+    public List<AbstractTask> getHistory() {
         return historyManager.getHistory();
     }
 }

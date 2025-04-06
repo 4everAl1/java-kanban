@@ -7,8 +7,9 @@ public class Task extends AbstractTask {
         this.setStatus(StatusTask.NEW);
 
     }
+
     //для обновления статуса
-    public Task(String title, String description, StatusTask status,int id) {
+    public Task(String title, String description, StatusTask status, int id) {
         super(title, description, status, id);
 
     }
