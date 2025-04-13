@@ -1,4 +1,6 @@
-package program;
+package tasks;
+
+import enums.StatusTask;
 
 import java.util.HashMap;
 
@@ -33,7 +35,7 @@ public class Epic extends AbstractTask {
 
     @Override
     public String toString() {
-        return "program.Epic{" +
+        return "tasks.Epic{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +

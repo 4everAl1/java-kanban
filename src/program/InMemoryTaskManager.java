@@ -3,6 +3,11 @@ package program;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import enums.StatusTask;
+import tasks.AbstractTask;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -147,6 +152,10 @@ public class InMemoryTaskManager implements TaskManager {
         checkEpicStatus(epicList.get(delId));
     }
 
+    public List<AbstractTask> getHistory() {
+        return historyManager.getHistory();
+    }
+
     private void checkEpicStatus(Epic epic) {
         boolean allDone = true;
         boolean allNew = true;
@@ -178,7 +187,5 @@ public class InMemoryTaskManager implements TaskManager {
         return countID++;
     }
 
-    public List<AbstractTask> getHistory() {
-        return historyManager.getHistory();
-    }
+
 }
