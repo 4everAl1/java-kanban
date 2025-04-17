@@ -7,11 +7,13 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import enums.StatusTask;
 import exceptions.ManagerSaveException;
 import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -23,8 +25,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
+    public FileBackedTaskManager(File file, List<String[]> allTasks) {
+        super(allTasks);
+        this.file = file;
+    }
+
+
     public static FileBackedTaskManager loadFromFile(File file) {
-        return null;
+        List<String[]> allTasks = getAllTaskFromFile(file);
+        return new FileBackedTaskManager(file, allTasks);
     }
 
 
@@ -104,11 +113,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void save() {
-        saverTasks(file);
-    }
-
-    private void saverTasks(File file) {
-        List <String[]> tasks= getAllTasksToString();
+        List<String[]> tasks = getAllTasksToString();
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -116,7 +121,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             writer.write(TASK_FIELDS);
 
             for (String[] el : tasks) {
-                String task = String.join(",",el);
+                String task = String.join(",", el);
                 writer.newLine();
                 writer.write(task);
             }
@@ -137,27 +142,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         for (AbstractTask el : allTasks) {
             if (el instanceof Task) {
                 type = "TASK";
+            } else if (el instanceof Epic) {
+                type = "EPIC";
             } else if (el instanceof Subtask) {
                 type = "SUBTASK";
                 epicId = String.valueOf(((Subtask) el).getEpicId());
-            } else if (el instanceof Epic) {
-                type = "EPIC";
             } else {
                 type = "";
             }
-            title = String.valueOf(el.getTitle());
+            title = el.getTitle();
             id = String.valueOf(el.getId());
             status = String.valueOf(el.getStatus());
             description = el.getDescription();
-            String res = id + ';' + type + ';' + title + ';' + status + ';' + description + ';' + epicId;
-            String[] resArray = res.split(";");
+
+            String[] resArray = {id, type, title, status, description, epicId};
             stringsTasksList.add(resArray);
         }
         return stringsTasksList;
-    }
-
-    private AbstractTask fromString(String value) {
-        return null;
     }
 
     private List<AbstractTask> getAllTasksToList() {
@@ -165,6 +166,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         List<Task> tasks = getAllTasks();
         List<Subtask> subtasks = getAllSubtask();
         List<Epic> epics = getAllEpics();
+
         if (!tasks.isEmpty()) {
             allTasks.addAll(tasks);
         }
@@ -177,5 +179,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             allTasks.addAll(subtasks);
         }
         return allTasks;
+    }
+
+    private static List<String[]> getAllTaskFromFile(File file) {
+        try (BufferedReader bufferedReader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            List<String[]> tasks = new ArrayList<>();
+            String line = bufferedReader.readLine();
+
+            if (!line.equals(TASK_FIELDS)) {
+                throw new ManagerSaveException("Invalid start line");
+            }
+
+            while ((line = bufferedReader.readLine()) != null) {
+                tasks.add(line.split(","));
+            }
+            return tasks;
+        } catch (IOException e) {
+            throw new ManagerSaveException("Error reading");
+        }
     }
 }

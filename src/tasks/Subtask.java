@@ -16,6 +16,11 @@ public class Subtask extends AbstractTask {
         super(title, description, status, id);
     }
 
+    public Subtask(String title, String description, StatusTask status, int id, int epicId) {
+        super(title, description, status, id);
+        this.epicId = epicId;
+    }
+
     public int getEpicId() {
         return epicId;
     }

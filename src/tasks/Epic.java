@@ -25,6 +25,12 @@ public class Epic extends AbstractTask {
         this.setStatus(StatusTask.NEW);
     }
 
+    public Epic(String title, String description, StatusTask statusTask, int Id) {
+        super(title, description, statusTask, Id);
+        subtasksEpic = new HashMap<>();
+
+    }
+
     public HashMap<Integer, Subtask> getMapSubtasksEpic() {
         return subtasksEpic;
     }

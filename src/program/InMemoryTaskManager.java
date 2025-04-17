@@ -3,11 +3,16 @@ package program;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import enums.StatusTask;
+import exceptions.ManagerSaveException;
 import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+
+import static java.lang.Integer.parseInt;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -17,6 +22,12 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int countID = 1;
 
+    public InMemoryTaskManager() {
+    }
+
+    public InMemoryTaskManager(List<String[]> allTasks) {
+        loadTasks(allTasks);
+    }
 
     @Override
     public ArrayList<Task> getAllTasks() {
@@ -127,6 +138,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask addSubtask(Subtask subtask, int epicId) {
+        if (!epicList.containsKey(epicId)) {
+            throw new NoSuchElementException("Key " + epicId + " not found.");
+        }
         subtask.setId(generateCountId());
         subtaskList.put(subtask.getId(), subtask);
         subtask.setEpicId(epicId);
@@ -187,5 +201,32 @@ public class InMemoryTaskManager implements TaskManager {
         return countID++;
     }
 
+    private void loadTasks(List<String[]> allTasks) {
+        StatusTask statusTask;
+        int epicById = 0;
 
+        for (String[] el : allTasks) {
+            String title = el[2];
+            String description = el[4];
+            int id = parseInt(el[0]);
+            if (el[1].equals("SUBTASK")) {
+                epicById = parseInt(el[5]);
+            }
+            switch (el[3]) {
+                case "NEW" -> statusTask = StatusTask.NEW;
+                case "DONE" -> statusTask = StatusTask.DONE;
+                case "IN_PROGRESS" -> statusTask = StatusTask.IN_PROGRESS;
+                default -> throw new IllegalStateException("Unexpected value: " + el[3]);
+            }
+            switch (el[1]) {
+                case "TASK" -> taskList.put(id, new Task(title, description, statusTask, id));
+                case "EPIC" -> epicList.put(id, new Epic(title, description, statusTask, id));
+                case "SUBTASK" -> {
+                    subtaskList.put(id, new Subtask(title, description, statusTask, id, epicById));
+                    epicList.get(parseInt(el[5])).addSubtask(id, subtaskList.get(id));
+                }
+                default -> throw new ManagerSaveException("Unexpected value: " + el[1]);
+            }
+        }
+    }
 }
