@@ -6,27 +6,34 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import enums.StatusTask;
-import exceptions.ManagerSaveException;
 import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import static java.lang.Integer.parseInt;
-
 public class InMemoryTaskManager implements TaskManager {
 
-    private final HashMap<Integer, Task> taskList = new HashMap<>();
-    private final HashMap<Integer, Epic> epicList = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private int countID = 1;
+    private final HashMap<Integer, Task> taskList;
+    private final HashMap<Integer, Epic> epicList;
+    private final HashMap<Integer, Subtask> subtaskList;
+    private final HistoryManager historyManager;
+    private int countID;
 
     public InMemoryTaskManager() {
+        this.taskList = new HashMap<>();
+        this.epicList = new HashMap<>();
+        this.subtaskList = new HashMap<>();
+        this.historyManager = Managers.getDefaultHistory();
+        this.countID = 1;
     }
 
-    public InMemoryTaskManager(List<String[]> allTasks) {
-        loadTasks(allTasks);
+    public InMemoryTaskManager(HashMap<Integer, Task> taskList, HashMap<Integer,
+            Epic> epicList, HashMap<Integer, Subtask> subtaskList, int countId) {
+        this.taskList = taskList;
+        this.epicList = epicList;
+        this.subtaskList = subtaskList;
+        this.historyManager = Managers.getDefaultHistory();
+        this.countID = countId;
     }
 
     @Override
@@ -199,34 +206,5 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int generateCountId() {
         return countID++;
-    }
-
-    private void loadTasks(List<String[]> allTasks) {
-        StatusTask statusTask;
-        int epicById = 0;
-
-        for (String[] el : allTasks) {
-            String title = el[2];
-            String description = el[4];
-            int id = parseInt(el[0]);
-            if (el[1].equals("SUBTASK")) {
-                epicById = parseInt(el[5]);
-            }
-            switch (el[3]) {
-                case "NEW" -> statusTask = StatusTask.NEW;
-                case "DONE" -> statusTask = StatusTask.DONE;
-                case "IN_PROGRESS" -> statusTask = StatusTask.IN_PROGRESS;
-                default -> throw new IllegalStateException("Unexpected value: " + el[3]);
-            }
-            switch (el[1]) {
-                case "TASK" -> taskList.put(id, new Task(title, description, statusTask, id));
-                case "EPIC" -> epicList.put(id, new Epic(title, description, statusTask, id));
-                case "SUBTASK" -> {
-                    subtaskList.put(id, new Subtask(title, description, statusTask, id, epicById));
-                    epicList.get(parseInt(el[5])).addSubtask(id, subtaskList.get(id));
-                }
-                default -> throw new ManagerSaveException("Unexpected value: " + el[1]);
-            }
-        }
     }
 }

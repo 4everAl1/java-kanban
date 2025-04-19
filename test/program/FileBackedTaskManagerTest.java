@@ -171,9 +171,9 @@ public class FileBackedTaskManagerTest {
         Subtask newSubtask1 = newTaskManager.getSubtaskByID(4);
 
         assertEquals(task1, newTask1, "Ошибка при загрузке задач из файла");
-        assertEquals(task1, newTask1, "Ошибка при загрузке задач из файла");
-        assertEquals(task1, newTask1, "Ошибка при загрузке задач из файла");
-        assertEquals(task1, newTask1, "Ошибка при загрузке задач из файла");
+        assertEquals(task2, newTask2, "Ошибка при загрузке задач из файла");
+        assertEquals(epic1, newEpic1, "Ошибка при загрузке задач из файла");
+        assertEquals(subtask1, newSubtask1, "Ошибка при загрузке задач из файла");
     }
 }
 

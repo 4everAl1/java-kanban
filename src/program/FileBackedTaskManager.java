@@ -5,13 +5,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import enums.StatusTask;
 import exceptions.ManagerSaveException;
 import tasks.AbstractTask;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+
+import static java.lang.Integer.parseInt;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -24,17 +28,46 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    public FileBackedTaskManager(File file, List<String[]> allTasks) {
-        super(allTasks);
+    public FileBackedTaskManager(File file, HashMap<Integer, Task> taskList, HashMap<Integer, Epic> epicList, HashMap<Integer, Subtask> subtaskList, int countId) {
+        super(taskList, epicList, subtaskList, countId);
         this.file = file;
     }
 
 
     public static FileBackedTaskManager loadFromFile(File file) {
         List<String[]> allTasks = getAllTaskFromFile(file);
-        return new FileBackedTaskManager(file, allTasks);
-    }
+        HashMap<Integer, Task> taskMap = new HashMap<>();
+        HashMap<Integer, Epic> epicMap = new HashMap<>();
+        HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
+        StatusTask statusTask;
+        int epicById = 0;
+        int id = 0;
 
+        for (String[] el : allTasks) {
+            String title = el[2];
+            String description = el[4];
+            id = parseInt(el[0]);
+            if (el[1].equals("SUBTASK")) {
+                epicById = parseInt(el[5]);
+            }
+            switch (el[3]) {
+                case "NEW" -> statusTask = StatusTask.NEW;
+                case "DONE" -> statusTask = StatusTask.DONE;
+                case "IN_PROGRESS" -> statusTask = StatusTask.IN_PROGRESS;
+                default -> throw new IllegalStateException("Unexpected value: " + el[3]);
+            }
+            switch (el[1]) {
+                case "TASK" -> taskMap.put(id, new Task(title, description, statusTask, id));
+                case "EPIC" -> epicMap.put(id, new Epic(title, description, statusTask, id));
+                case "SUBTASK" -> {
+                    subtaskMap.put(id, new Subtask(title, description, statusTask, id, epicById));
+                    epicMap.get(parseInt(el[5])).addSubtask(id, subtaskMap.get(id));
+                }
+                default -> throw new ManagerSaveException("Unexpected value: " + el[1]);
+            }
+        }
+        return new FileBackedTaskManager(file, taskMap, epicMap, subtaskMap, id + 1);
+    }
 
     @Override
     public Task addTask(Task task) {
@@ -113,9 +146,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         List<String[]> tasks = getAllTasksToString();
-        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 
             writer.write(TASK_FIELDS);
 
