@@ -3,15 +3,38 @@ package program;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import enums.StatusTask;
+import tasks.AbstractTask;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private final HashMap<Integer, Task> taskList = new HashMap<>();
-    private final HashMap<Integer, Epic> epicList = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private int countID = 1;
+    private final HashMap<Integer, Task> taskList;
+    private final HashMap<Integer, Epic> epicList;
+    private final HashMap<Integer, Subtask> subtaskList;
+    private final HistoryManager historyManager;
+    private int countID;
 
+    public InMemoryTaskManager() {
+        this.taskList = new HashMap<>();
+        this.epicList = new HashMap<>();
+        this.subtaskList = new HashMap<>();
+        this.historyManager = Managers.getDefaultHistory();
+        this.countID = 1;
+    }
+
+    public InMemoryTaskManager(HashMap<Integer, Task> taskList, HashMap<Integer,
+            Epic> epicList, HashMap<Integer, Subtask> subtaskList, int countId) {
+        this.taskList = taskList;
+        this.epicList = epicList;
+        this.subtaskList = subtaskList;
+        this.historyManager = Managers.getDefaultHistory();
+        this.countID = countId;
+    }
 
     @Override
     public ArrayList<Task> getAllTasks() {
@@ -122,6 +145,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask addSubtask(Subtask subtask, int epicId) {
+        if (!epicList.containsKey(epicId)) {
+            throw new NoSuchElementException("Key " + epicId + " not found.");
+        }
         subtask.setId(generateCountId());
         subtaskList.put(subtask.getId(), subtask);
         subtask.setEpicId(epicId);
@@ -145,6 +171,10 @@ public class InMemoryTaskManager implements TaskManager {
         epicList.get(subtaskList.get(id).getEpicId()).getMapSubtasksEpic().remove(id);
         subtaskList.remove(id);
         checkEpicStatus(epicList.get(delId));
+    }
+
+    public List<AbstractTask> getHistory() {
+        return historyManager.getHistory();
     }
 
     private void checkEpicStatus(Epic epic) {
@@ -176,9 +206,5 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int generateCountId() {
         return countID++;
-    }
-
-    public List<AbstractTask> getHistory() {
-        return historyManager.getHistory();
     }
 }

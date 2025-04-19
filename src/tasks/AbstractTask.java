@@ -1,4 +1,7 @@
-package program;
+package tasks;
+
+
+import enums.StatusTask;
 
 import java.util.Objects;
 

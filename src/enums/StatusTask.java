@@ -1,4 +1,4 @@
-package program;
+package enums;
 
 public enum StatusTask {
     NEW,

@@ -8,6 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import enums.StatusTask;
+import tasks.AbstractTask;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {

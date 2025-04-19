@@ -1,4 +1,6 @@
-package program;
+package tasks;
+
+import enums.StatusTask;
 
 public class Subtask extends AbstractTask {
 
@@ -14,6 +16,11 @@ public class Subtask extends AbstractTask {
         super(title, description, status, id);
     }
 
+    public Subtask(String title, String description, StatusTask status, int id, int epicId) {
+        super(title, description, status, id);
+        this.epicId = epicId;
+    }
+
     public int getEpicId() {
         return epicId;
     }
@@ -24,7 +31,7 @@ public class Subtask extends AbstractTask {
 
     @Override
     public String toString() {
-        return "program.Subtask{" +
+        return "tasks.Subtask{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() + '\'' +

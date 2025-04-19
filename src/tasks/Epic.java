@@ -1,4 +1,6 @@
-package program;
+package tasks;
+
+import enums.StatusTask;
 
 import java.util.HashMap;
 
@@ -23,6 +25,12 @@ public class Epic extends AbstractTask {
         this.setStatus(StatusTask.NEW);
     }
 
+    public Epic(String title, String description, StatusTask statusTask, int id) {
+        super(title, description, statusTask, id);
+        subtasksEpic = new HashMap<>();
+
+    }
+
     public HashMap<Integer, Subtask> getMapSubtasksEpic() {
         return subtasksEpic;
     }
@@ -33,7 +41,7 @@ public class Epic extends AbstractTask {
 
     @Override
     public String toString() {
-        return "program.Epic{" +
+        return "tasks.Epic{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +

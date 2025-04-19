@@ -1,5 +1,7 @@
 package program;
 
+import tasks.AbstractTask;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
