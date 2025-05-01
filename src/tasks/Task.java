@@ -1,4 +1,6 @@
-package program;
+package tasks;
+
+import enums.StatusTask;
 
 public class Task extends AbstractTask {
 
@@ -16,7 +18,7 @@ public class Task extends AbstractTask {
 
     @Override
     public String toString() {
-        return "program.Task{" +
+        return "tasks.Task{" +
                 "title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +

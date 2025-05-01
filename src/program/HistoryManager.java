@@ -1,5 +1,7 @@
 package program;
 
+import tasks.AbstractTask;
+
 import java.util.List;
 
 public interface HistoryManager {
