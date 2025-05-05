@@ -3,6 +3,7 @@ package tasks;
 
 import enums.StatusTask;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class AbstractTask {
@@ -11,18 +12,45 @@ public abstract class AbstractTask {
     private String description;
     private StatusTask status;
     private int id;
+    private int duration;
+    private LocalDateTime startTime;
+    private LocalDateTime getEndTime;
 
+    //Для создания задач без временных рамок
     public AbstractTask(String title, String description) {
         this.title = title;
         this.description = description;
         this.status = StatusTask.NEW;
     }
 
+    //Для обновления задач без временных рамок
     public AbstractTask(String title, String description, StatusTask status, int id) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.id = id;
+    }
+
+    //Для создания задач с временными рамками
+    public AbstractTask(String title, String description, LocalDateTime startTime, int duration) {
+        this.title = title;
+        this.description = description;
+        this.status = StatusTask.NEW;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.getEndTime = startTime.plusMinutes(duration);
+    }
+
+    //Для обновления задач с временными рамками
+    public AbstractTask(String title, String description, StatusTask status, int id,
+                        LocalDateTime startTime, int duration) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.id = id;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.getEndTime = startTime != null ? startTime.plusMinutes(duration) : null;
     }
 
     public String getTitle() {
@@ -55,6 +83,26 @@ public abstract class AbstractTask {
 
     public void setStatus(StatusTask status) {
         this.status = status;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getGetEndTime() {
+        return getEndTime;
     }
 
     @Override

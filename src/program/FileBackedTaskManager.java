@@ -4,9 +4,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import enums.StatusTask;
 import exceptions.ManagerSaveException;
@@ -15,58 +16,71 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import static java.lang.Integer.parseInt;
-
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
-    private static final String TASK_FIELDS = "id,type,name,status,description,epic";
+    private static final String TASK_FIELDS = "id,type,name,status,description,epic,startTime,duration,endTimeForEpic";
     private final File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
-    public FileBackedTaskManager(File file, HashMap<Integer, Task> taskList, HashMap<Integer, Epic> epicList, HashMap<Integer, Subtask> subtaskList, int countId) {
-        super(taskList, epicList, subtaskList, countId);
+    public FileBackedTaskManager(File file,
+                                 HashMap<Integer, Task> taskList,
+                                 HashMap<Integer, Epic> epicList,
+                                 HashMap<Integer, Subtask> subtaskList,
+                                 int countId, TreeSet<AbstractTask> prioritizedTasksList) {
+        super(taskList, epicList, subtaskList, countId, prioritizedTasksList);
         this.file = file;
     }
 
 
     public static FileBackedTaskManager loadFromFile(File file) {
-        List<String[]> allTasks = getAllTaskFromFile(file);
         HashMap<Integer, Task> taskMap = new HashMap<>();
         HashMap<Integer, Epic> epicMap = new HashMap<>();
         HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
-        StatusTask statusTask;
-        int epicById = 0;
-        int id = 0;
+        TreeSet<AbstractTask> prioritizedTasksList = new TreeSet<>((a, b) -> {
+            if (a.getStartTime() == null || b.getStartTime() == null) {
+                throw new IllegalStateException("The value is null");
+            }
+            return a.getStartTime().compareTo(b.getStartTime());
+        });
 
-        for (String[] el : allTasks) {
+        int id = 0;
+        for (String[] el : getAllTaskFromFile(file)) {
+            id = Integer.parseInt(el[0]);
+            String type = el[1];
             String title = el[2];
+            StatusTask status = StatusTask.valueOf(el[3]);
             String description = el[4];
-            id = parseInt(el[0]);
-            if (el[1].equals("SUBTASK")) {
-                epicById = parseInt(el[5]);
-            }
-            switch (el[3]) {
-                case "NEW" -> statusTask = StatusTask.NEW;
-                case "DONE" -> statusTask = StatusTask.DONE;
-                case "IN_PROGRESS" -> statusTask = StatusTask.IN_PROGRESS;
-                default -> throw new IllegalStateException("Unexpected value: " + el[3]);
-            }
-            switch (el[1]) {
-                case "TASK" -> taskMap.put(id, new Task(title, description, statusTask, id));
-                case "EPIC" -> epicMap.put(id, new Epic(title, description, statusTask, id));
+            int epicId = el[5].isBlank() ? 0 : Integer.parseInt(el[5]);
+            LocalDateTime startTime = el[6].isBlank() ? null : LocalDateTime.parse(el[6]);
+            int duration = el[7].isBlank() ? 0 : Integer.parseInt(el[7]);
+            LocalDateTime endTimeForEpic = el[8].isBlank() ? null : LocalDateTime.parse(el[8]);
+
+            switch (type) {
+                case "TASK" -> {
+                    taskMap.put(id, new Task(title, description, status, id, startTime, duration));
+                    if (startTime != null) {
+                        prioritizedTasksList.add(taskMap.get(id));
+                    }
+                }
+                case "EPIC" -> epicMap.put(id, new Epic(title, description, status, id,
+                            startTime, duration, endTimeForEpic));
                 case "SUBTASK" -> {
-                    subtaskMap.put(id, new Subtask(title, description, statusTask, id, epicById));
-                    epicMap.get(parseInt(el[5])).addSubtask(id, subtaskMap.get(id));
+                    subtaskMap.put(id, new Subtask(title, description, status, id, epicId,
+                            startTime, duration));
+                    if (startTime != null) {
+                        prioritizedTasksList.add(subtaskMap.get(id));
+                    }
+                    epicMap.get(epicId).addSubtask(id, subtaskMap.get(id));
                 }
                 default -> throw new ManagerSaveException("Unexpected value: " + el[1]);
             }
         }
-        return new FileBackedTaskManager(file, taskMap, epicMap, subtaskMap, id + 1);
+        return new FileBackedTaskManager(file, taskMap, epicMap, subtaskMap, id + 1, prioritizedTasksList);
     }
 
     @Override
@@ -146,7 +160,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         List<String[]> tasks = getAllTasksToString();
-        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(),
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING)) {
 
             writer.write(TASK_FIELDS);
 
@@ -162,53 +179,41 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private List<String[]> getAllTasksToString() {
         List<String[]> stringsTasksList = new ArrayList<>();
-        List<AbstractTask> allTasks = getAllTasksToList();
-        String id;
-        String type;
-        String title;
-        String status;
-        String description;
-        String epicId = "";
-        for (AbstractTask el : allTasks) {
-            if (el instanceof Task) {
-                type = "TASK";
-            } else if (el instanceof Epic) {
-                type = "EPIC";
-            } else if (el instanceof Subtask) {
-                type = "SUBTASK";
-                epicId = String.valueOf(((Subtask) el).getEpicId());
-            } else {
-                type = "";
-            }
-            title = el.getTitle();
-            id = String.valueOf(el.getId());
-            status = String.valueOf(el.getStatus());
-            description = el.getDescription();
+        for (AbstractTask el : getAllTasksToList()) {
+            String id = String.valueOf(el.getId());
+            String type;
+            String title = el.getTitle();
+            String description = el.getDescription();
+            String status = el.getStatus().toString();
+            String epicId = "";
+            String startTime = el.getStartTime() != null ? el.getStartTime().toString() : "";
+            String duration = el.getStartTime() != null ? String.valueOf(el.getDuration()) : "";
+            String epicEndTime = "";
 
-            String[] resArray = {id, type, title, status, description, epicId};
-            stringsTasksList.add(resArray);
+            switch (el) {
+                case Task task -> type = "TASK";
+                case Epic epic -> {
+                    type = "EPIC";
+                    epicEndTime = epic.getEndTime() != null ? epic.getEndTime().toString() : "";
+                }
+                case Subtask subtask -> {
+                    type = "SUBTASK";
+                    epicId = String.valueOf(subtask.getEpicId());
+                }
+                default -> throw new ManagerSaveException("Unknown type");
+            }
+            stringsTasksList.add(new String[]{id, type, title, status,
+                    description, epicId, startTime, duration, epicEndTime});
         }
         return stringsTasksList;
     }
 
     private List<AbstractTask> getAllTasksToList() {
-        List<AbstractTask> allTasks = new ArrayList<>();
-        List<Task> tasks = getAllTasks();
-        List<Subtask> subtasks = getAllSubtask();
-        List<Epic> epics = getAllEpics();
-
-        if (!tasks.isEmpty()) {
-            allTasks.addAll(tasks);
-        }
-
-        if (!epics.isEmpty()) {
-            allTasks.addAll(epics);
-        }
-
-        if (!subtasks.isEmpty()) {
-            allTasks.addAll(subtasks);
-        }
-        return allTasks;
+        return Stream.of(
+                getAllTasks(),
+                getAllEpics(),
+                getAllSubtask()
+        ).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     private static List<String[]> getAllTaskFromFile(File file) {
@@ -221,7 +226,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
 
             while ((line = bufferedReader.readLine()) != null) {
-                tasks.add(line.split(","));
+                tasks.add(line.split(",", -1));
             }
             return tasks;
         } catch (IOException e) {
