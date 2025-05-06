@@ -2,9 +2,13 @@ package tasks;
 
 import enums.StatusTask;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class Epic extends AbstractTask {
+
+    private LocalDateTime endTime;
 
     private HashMap<Integer, Subtask> subtasksEpic;
 
@@ -29,6 +33,28 @@ public class Epic extends AbstractTask {
         super(title, description, statusTask, id);
         subtasksEpic = new HashMap<>();
 
+    }
+
+    //Для создания объекта в FileBackedTaskManager
+    public Epic(String title,
+                String description,
+                StatusTask statusTask,
+                int id,
+                LocalDateTime startTime,
+                Duration duration,
+                LocalDateTime endTime) {
+        super(title, description, statusTask, id, startTime, duration);
+        this.endTime = endTime;
+        subtasksEpic = new HashMap<>();
+
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public HashMap<Integer, Subtask> getMapSubtasksEpic() {

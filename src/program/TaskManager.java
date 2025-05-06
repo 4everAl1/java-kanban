@@ -5,11 +5,10 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     void removeAllTask();
 
@@ -21,11 +20,11 @@ public interface TaskManager {
 
     void removeTaskById(int id);
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     void removeAllEpic();
 
-    Epic getEpicByID(int id);
+    Epic getEpicById(int id);
 
     Epic addEpic(Epic epic);
 
@@ -33,9 +32,9 @@ public interface TaskManager {
 
     void removeEpicById(int id);
 
-    ArrayList<Subtask> getAllSubtask();
+    List<Subtask> getAllSubtask();
 
-    ArrayList<Subtask> getSubtaskByEpic(int epicId);
+    List<Subtask> getSubtaskByEpic(int epicId);
 
     void removeAllSubtask();
 
@@ -48,5 +47,7 @@ public interface TaskManager {
     void removeSubtaskById(int id);
 
     List<AbstractTask> getHistory();
+
+    List<AbstractTask> getPrioritizedTasks();
 
 }
