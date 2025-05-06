@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import enums.StatusTask;
+import exceptions.InvalidTimeException;
 import exceptions.ManagerSaveException;
 import tasks.AbstractTask;
 import tasks.Epic;
@@ -26,12 +27,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtaskList = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
         this.countID = 1;
-        this.prioritizedTasksList = new TreeSet<>((a, b) -> {
-            if (a.getStartTime() == null || b.getStartTime() == null) {
-                throw new IllegalStateException("The value is null");
-            }
-            return a.getStartTime().compareTo(b.getStartTime());
-        });
+        this.prioritizedTasksList = new TreeSet<>(Comparator.comparing(AbstractTask::getStartTime));
     }
 
     public InMemoryTaskManager(HashMap<Integer, Task> taskList,
@@ -68,7 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task addTask(Task task) {
         if (checkTimeFrame(task)) {
-            throw new ManagerSaveException("Invalid time");
+            throw new InvalidTimeException("Invalid time");
         }
         task.setId(generateCountId());
         taskList.put(task.getId(), task);
@@ -152,8 +148,8 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskList.clear();
         epicList.values().forEach(e -> {
             e.getMapSubtasksEpic().clear();
-            startTimeEpic(e);
-            endTimeEpic(e);
+            updateEpicStartTime(e);
+            updateEpicEndTime(e);
             checkEpicTotalTime(e);
             checkEpicStatus(e);
         });
@@ -171,15 +167,15 @@ public class InMemoryTaskManager implements TaskManager {
             throw new NoSuchElementException("Key " + epicId + " not found.");
         }
         if (checkTimeFrame(subtask)) {
-            throw new ManagerSaveException("Invalid time");
+            throw new InvalidTimeException("Invalid time");
         }
         subtask.setId(generateCountId());
         subtaskList.put(subtask.getId(), subtask);
         subtask.setEpicId(epicId);
         epicList.get(epicId).addSubtask(subtask.getId(), subtask);
         addInPrioritizedList(subtask);
-        startTimeEpic(epicList.get(epicId));
-        endTimeEpic(epicList.get(epicId));
+        updateEpicStartTime(epicList.get(epicId));
+        updateEpicEndTime(epicList.get(epicId));
         checkEpicTotalTime(epicList.get(epicId));
         checkEpicStatus(epicList.get(epicId));
         return subtask;
@@ -190,12 +186,15 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epicList.containsKey(subtask.getEpicId())) {
             throw new NoSuchElementException("Key " + subtask.getEpicId() + " not found.");
         }
+        if (checkTimeFrame(subtask)) {
+            throw new InvalidTimeException("Invalid time");
+        }
         subtaskList.put(subtask.getId(), subtask);
         epicList.get(subtask.getEpicId()).addSubtask(subtask.getId(), subtask);
         removeFromPrioritizedList(subtask);
         addInPrioritizedList(subtask);
-        startTimeEpic(epicList.get(subtask.getEpicId()));
-        endTimeEpic(epicList.get(subtask.getEpicId()));
+        updateEpicStartTime(epicList.get(subtask.getEpicId()));
+        updateEpicEndTime(epicList.get(subtask.getEpicId()));
         checkEpicTotalTime(epicList.get(subtask.getEpicId()));
         checkEpicStatus(epicList.get(subtask.getEpicId()));
     }
@@ -206,8 +205,8 @@ public class InMemoryTaskManager implements TaskManager {
         removeFromPrioritizedList(subtaskList.get(id));
         epicList.get(removeSubtask.getEpicId()).getMapSubtasksEpic().remove(id);
         subtaskList.remove(id);
-        startTimeEpic(epicList.get(removeSubtask.getEpicId()));
-        endTimeEpic(epicList.get(removeSubtask.getEpicId()));
+        updateEpicStartTime(epicList.get(removeSubtask.getEpicId()));
+        updateEpicEndTime(epicList.get(removeSubtask.getEpicId()));
         checkEpicTotalTime(epicList.get(removeSubtask.getEpicId()));
         checkEpicStatus(epicList.get(removeSubtask.getEpicId()));
     }
@@ -237,29 +236,26 @@ public class InMemoryTaskManager implements TaskManager {
         Duration duration = prioritizedTasksList
                 .stream()
                 .filter(s -> s instanceof Subtask)
-                .filter(s -> ((Subtask) s).getEpicId() == epic.getId())
-                .map(s -> Duration.ofMinutes(s.getDuration()))
-                .reduce(Duration.ZERO, Duration::plus);
-        epic.setDuration((int) duration.toMinutes());
-    }
-
-    private void startTimeEpic(Epic epic) {
-        Optional<LocalDateTime> startTime = prioritizedTasksList.stream()
-                .filter(s -> s instanceof Subtask)
                 .map(s -> (Subtask) s)
                 .filter(s -> s.getEpicId() == epic.getId())
-                .map(Subtask::getStartTime)
-                .min(LocalDateTime::compareTo);
+                .map(Subtask::getDuration)
+                .reduce(Duration.ZERO, Duration::plus);
+        epic.setDuration(duration);
+    }
+
+    private void updateEpicStartTime(Epic epic) {
+        Optional<LocalDateTime> startTime = epic.getMapSubtasksEpic().values()
+                .stream()
+                .filter(s -> s.getStartTime() != null)
+                .map(Subtask::getStartTime).min(LocalDateTime::compareTo);
         epic.setStartTime(startTime.orElse(null));
     }
 
-    private void endTimeEpic(Epic epic) {
-        Optional<LocalDateTime> endTime = prioritizedTasksList.stream()
-                .filter(s -> s instanceof Subtask)
-                .map(s -> (Subtask) s)
-                .filter(s -> s.getEpicId() == epic.getId())
-                .map(Subtask::getGetEndTime)
-                .max(LocalDateTime::compareTo);
+    private void updateEpicEndTime(Epic epic) {
+        Optional<LocalDateTime> endTime = epic.getMapSubtasksEpic().values()
+                .stream()
+                .filter(s -> s.getGetEndTime() != null)
+                .map(Subtask::getGetEndTime).max(LocalDateTime::compareTo);
         epic.setEndTime(endTime.orElse(null));
     }
 

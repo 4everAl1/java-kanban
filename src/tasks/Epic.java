@@ -2,6 +2,7 @@ package tasks;
 
 import enums.StatusTask;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -40,7 +41,7 @@ public class Epic extends AbstractTask {
                 StatusTask statusTask,
                 int id,
                 LocalDateTime startTime,
-                int duration,
+                Duration duration,
                 LocalDateTime endTime) {
         super(title, description, statusTask, id, startTime, duration);
         this.endTime = endTime;

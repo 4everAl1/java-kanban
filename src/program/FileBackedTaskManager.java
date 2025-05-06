@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,12 +42,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         HashMap<Integer, Task> taskMap = new HashMap<>();
         HashMap<Integer, Epic> epicMap = new HashMap<>();
         HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
-        TreeSet<AbstractTask> prioritizedTasksList = new TreeSet<>((a, b) -> {
-            if (a.getStartTime() == null || b.getStartTime() == null) {
-                throw new IllegalStateException("The value is null");
-            }
-            return a.getStartTime().compareTo(b.getStartTime());
-        });
+        TreeSet<AbstractTask> prioritizedTasksList = new TreeSet<>(Comparator.comparing(AbstractTask::getStartTime));
 
         int id = 0;
         for (String[] el : getAllTaskFromFile(file)) {
@@ -57,7 +53,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String description = el[4];
             int epicId = el[5].isBlank() ? 0 : Integer.parseInt(el[5]);
             LocalDateTime startTime = el[6].isBlank() ? null : LocalDateTime.parse(el[6]);
-            int duration = el[7].isBlank() ? 0 : Integer.parseInt(el[7]);
+            Duration duration = el[7].isBlank() ? null : Duration.parse(el[7]);
             LocalDateTime endTimeForEpic = el[8].isBlank() ? null : LocalDateTime.parse(el[8]);
 
             switch (type) {
@@ -68,7 +64,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                 }
                 case "EPIC" -> epicMap.put(id, new Epic(title, description, status, id,
-                            startTime, duration, endTimeForEpic));
+                        startTime, duration, endTimeForEpic));
                 case "SUBTASK" -> {
                     subtaskMap.put(id, new Subtask(title, description, status, id, epicId,
                             startTime, duration));
@@ -187,7 +183,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String status = el.getStatus().toString();
             String epicId = "";
             String startTime = el.getStartTime() != null ? el.getStartTime().toString() : "";
-            String duration = el.getStartTime() != null ? String.valueOf(el.getDuration()) : "";
+            String duration = el.getStartTime() != null ? el.getDuration().toString() : "";
             String epicEndTime = "";
 
             switch (el) {

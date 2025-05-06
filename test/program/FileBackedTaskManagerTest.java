@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,8 +54,8 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @Test
     void savingTaskAfterAddingWithTime() {
         taskManager.addTask(new Task("Task", "Description",
-                LocalDateTime.of(2025, 4, 12, 14, 55), 20));
-        String exceptText = "1,TASK,Task,NEW,Description,,2025-04-12T14:55,20,";
+                LocalDateTime.of(2025, 4, 12, 14, 55), Duration.ofMinutes(20)));
+        String exceptText = "1,TASK,Task,NEW,Description,,2025-04-12T14:55,PT20M,";
         String savingText;
         try (BufferedReader reader = Files.newBufferedReader(tempFile.toPath())) {
             reader.readLine();
@@ -177,7 +178,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         Task task1 = taskManager.addTask(new Task("Task1", "Description1"));
         Task task2 = taskManager.addTask(new Task("Task2", "Description2"));
         Task task3 = taskManager.addTask(new Task("Task3", "Description3",
-                LocalDateTime.of(2025, 4, 12, 14, 55), 20));
+                LocalDateTime.of(2025, 4, 12, 14, 55), Duration.ofMinutes(20)));
         Epic epic1 = taskManager.addEpic(new Epic("Epic", "DescriptionEpic"));
         Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask", "DescriptionSubtask"),
                 epic1.getId());
@@ -216,7 +217,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         assertDoesNotThrow(() -> {
             Task task1 = taskManager.addTask(new Task("Task1", "Description1"));
             Task task2 = taskManager.addTask(new Task("Task2", "Description2",
-                    LocalDateTime.of(2025, 4, 12, 14, 55), 20));
+                    LocalDateTime.of(2025, 4, 12, 14, 55), Duration.ofMinutes(20)));
             Epic epic1 = taskManager.addEpic(new Epic("Epic", "DescriptionEpic"));
             Subtask subtask1 = taskManager.addSubtask(new Subtask("Subtask", "DescriptionSubtask"),
                     epic1.getId());

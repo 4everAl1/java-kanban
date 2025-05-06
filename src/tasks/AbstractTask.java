@@ -3,6 +3,7 @@ package tasks;
 
 import enums.StatusTask;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ public abstract class AbstractTask {
     private String description;
     private StatusTask status;
     private int id;
-    private int duration;
+    private Duration duration;
     private LocalDateTime startTime;
     private LocalDateTime getEndTime;
 
@@ -32,25 +33,25 @@ public abstract class AbstractTask {
     }
 
     //Для создания задач с временными рамками
-    public AbstractTask(String title, String description, LocalDateTime startTime, int duration) {
+    public AbstractTask(String title, String description, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.status = StatusTask.NEW;
         this.startTime = startTime;
         this.duration = duration;
-        this.getEndTime = startTime.plusMinutes(duration);
+        this.getEndTime = startTime.plus(duration);
     }
 
     //Для обновления задач с временными рамками
     public AbstractTask(String title, String description, StatusTask status, int id,
-                        LocalDateTime startTime, int duration) {
+                        LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.id = id;
         this.startTime = startTime;
         this.duration = duration;
-        this.getEndTime = startTime != null ? startTime.plusMinutes(duration) : null;
+        this.getEndTime = startTime != null ? startTime.plus(duration) : null;
     }
 
     public String getTitle() {
@@ -85,11 +86,11 @@ public abstract class AbstractTask {
         this.status = status;
     }
 
-    public int getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 

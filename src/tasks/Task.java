@@ -2,6 +2,7 @@ package tasks;
 
 import enums.StatusTask;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Task extends AbstractTask {
@@ -14,7 +15,7 @@ public class Task extends AbstractTask {
     }
 
     //С учётом времени
-    public Task(String title, String description, LocalDateTime startTime, int duration) {
+    public Task(String title, String description, LocalDateTime startTime, Duration duration) {
         super(title, description, startTime, duration);
         this.setStatus(StatusTask.NEW);
     }
@@ -25,7 +26,7 @@ public class Task extends AbstractTask {
     }
 
     //С учётом времени
-    public Task(String title, String description, StatusTask status, int id, LocalDateTime startTime, int duration) {
+    public Task(String title, String description, StatusTask status, int id, LocalDateTime startTime, Duration duration) {
         super(title, description, status, id, startTime, duration);
     }
 
