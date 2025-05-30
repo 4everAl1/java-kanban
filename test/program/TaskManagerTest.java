@@ -16,7 +16,7 @@ import tasks.Task;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class TaskManagerTest<T extends TaskManager> {
+public abstract class TaskManagerTest<T extends TaskManager> {
 
     TaskManager taskManager = new InMemoryTaskManager();
     HistoryManager historyManager = new InMemoryHistoryManager();

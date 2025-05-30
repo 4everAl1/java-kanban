@@ -10,7 +10,7 @@ public class Epic extends AbstractTask {
 
     private LocalDateTime endTime;
 
-    private HashMap<Integer, Subtask> subtasksEpic;
+    private HashMap<Integer, Subtask> subtasksEpic = new HashMap<>();
 
     public void setSubtasksEpic(HashMap<Integer, Subtask> subtasksEpic) {
         this.subtasksEpic = subtasksEpic;
@@ -18,20 +18,17 @@ public class Epic extends AbstractTask {
 
     public Epic(String title, String description) {
         super(title, description);
-        subtasksEpic = new HashMap<>();
         this.setStatus(StatusTask.NEW);
     }
 
     public Epic(String title, String description, int id) {
         super(title, description);
         this.setId(id);
-        subtasksEpic = new HashMap<>();
         this.setStatus(StatusTask.NEW);
     }
 
     public Epic(String title, String description, StatusTask statusTask, int id) {
         super(title, description, statusTask, id);
-        subtasksEpic = new HashMap<>();
 
     }
 
@@ -45,8 +42,6 @@ public class Epic extends AbstractTask {
                 LocalDateTime endTime) {
         super(title, description, statusTask, id, startTime, duration);
         this.endTime = endTime;
-        subtasksEpic = new HashMap<>();
-
     }
 
     public LocalDateTime getEndTime() {
