@@ -23,16 +23,14 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
         this.taskManager = taskManager;
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
     }
 
     public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.getDefault();
-
-        Gson gson1 = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .create();
         HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
 
         httpTaskServer.start();
