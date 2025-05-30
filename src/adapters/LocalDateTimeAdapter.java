@@ -1,4 +1,4 @@
-package gsonAdapter;
+package adapters;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -29,4 +29,4 @@ public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
         }
         return LocalDateTime.parse(jsonReader.nextString(), dtf);
     }
-} 
+}
