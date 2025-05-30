@@ -1,12 +1,19 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
+import gsonAdapter.DurationAdapter;
+import gsonAdapter.LocalDateTimeAdapter;
 import handlers.*;
+import program.Managers;
 import program.TaskManager;
+
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class HttpTaskServer {
 
@@ -17,10 +24,23 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
         this.taskManager = taskManager;
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+
+        TaskManager taskManager = Managers.getDefault();
+
+        Gson gson1 = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
+
+        httpTaskServer.start();
 
     }
 
@@ -32,6 +52,10 @@ public class HttpTaskServer {
         httpServer.createContext("/prioritized", new PrioritizedHandler(taskManager, gson));
 
         httpServer.start();
+    }
+
+    public Gson getGson() {
+        return gson;
     }
 
     public void stop() {

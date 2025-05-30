@@ -7,7 +7,7 @@ import program.TaskManager;
 
 import java.io.IOException;
 
-public class PrioritizedHandler extends BaseHttpHandler{
+public class PrioritizedHandler extends BaseHttpHandler {
 
     public PrioritizedHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
@@ -18,11 +18,9 @@ public class PrioritizedHandler extends BaseHttpHandler{
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String[] path = exchange.getRequestURI().getPath().split("/");
-        String method = exchange.getRequestMethod();
+    public void handleRequest(HttpExchange exchange, String[] path, String method) throws IOException {
         if (path.length == 2 && method.equals("GET")) {
-            sendText(exchange, gson.toJson(taskManager.()), 200);
+            sendText(exchange, gson.toJson(taskManager.getPrioritizedTasks()), 200);
             return;
         }
         throw new NotFoundException("Not found: " + method + " " + exchange.getRequestURI().getPath());

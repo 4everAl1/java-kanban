@@ -118,6 +118,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
+        if (!epicList.containsKey(epic.getId())) {
+            throw new NoSuchElementException("Key " + epic.getId() + " not found.");
+        }
         HashMap<Integer, Subtask> subtasks = epicList.get(epic.getId()).getMapSubtasksEpic();
         epicList.put(epic.getId(), epic);
         epicList.get(epic.getId()).setSubtasksEpic(subtasks);
