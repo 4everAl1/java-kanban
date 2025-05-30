@@ -16,15 +16,28 @@ public class Subtask extends AbstractTask {
     }
 
     //С учётом времени
-    public Subtask(String title, String description,
-                   LocalDateTime startTime, Duration duration) {
+    public Subtask(String title,
+                   String description,
+                   LocalDateTime startTime,
+                   Duration duration) {
         super(title, description, startTime, duration);
         super.setStatus(StatusTask.NEW);
     }
 
+    public Subtask(String title,
+                   String description,
+                   LocalDateTime startTime,
+                   Duration duration,
+                   int epicId) {
+        super(title, description, startTime, duration);
+        super.setStatus(StatusTask.NEW);
+        this.epicId = epicId;
+    }
 
-    public Subtask(String title, String description,
-                   StatusTask status, int id) {
+    public Subtask(String title,
+                   String description,
+                   StatusTask status,
+                   int id) {
         super(title, description, status, id);
     }
 
